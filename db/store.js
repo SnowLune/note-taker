@@ -24,28 +24,50 @@ class Store {
          }
       )
    }
+
+   // Create notes
+   createNote(note) {
+      var {title, text} = note;
+
+      var newNote = { title, text, id: uuid() };
+
+      return this.getNotes()
+         .then(
+            function(notes) {
+               return [...notes, newNote];
+            }
+         )
+         .then(
+            function(updatedNotes) {
+               return this.write(updatedNotes)
+            }
+         )
+         .then(
+            function() {
+               return newNote
+            }
+         )
+   }
+
+   // Remove notes
+   removeNote(id) {
+      const removedNotes = this.getNotes()
+         .then(
+            function(notes) {
+               return notes.filter(
+                  function(note) {
+                     return note.id !== id
+                  }
+               )
+            }
+         )
+         .then(
+            function(filteredNotes) {
+               return this.write(filteredNotes)
+            }
+         );
+   }
 }
 
-createNote(note) {
-   var {title, text} = note;
-
-   var newNote = { title, text, id: uuid() };
-
-   return this.getNotes()
-      .then(
-         function(notes) {
-            return [...notes, newNote];
-         }
-      )
-      .then(
-         function(updatedNotes) {
-            return this.write(updatedNotes)
-         }
-      )
-      .then(
-         function() {
-            return newNote
-         }
-      )
-}
+module.exports = new Store();
 
